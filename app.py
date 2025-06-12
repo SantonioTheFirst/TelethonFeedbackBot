@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 API_ID = os.getenv('API_ID', '')
 API_HASH = os.getenv('API_HASH', '')
 BOT_TOKEN = os.getenv('BOT_TOKEN', '')
-ADMIN_ID = int(os.getenv('ADMIN_ID', '0')
+ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
 
 class FeedbackBot:
     def __init__(self):
