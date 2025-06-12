@@ -448,4 +448,5 @@ class FeedbackBot:
 # Запуск бота
 if __name__ == "__main__":
     bot = FeedbackBot()
-    await bot.start()
+    #await bot.start()
+    asyncio.run(bot.start())
