@@ -23,6 +23,7 @@ ADMIN_ID = int(os.getenv('ADMIN_ID', '0')
 class FeedbackBot:
     def __init__(self):
         self.client = TelegramClient('feedback_bot', API_ID, API_HASH)
+        os.makedirs('/data', exist_ok=True)
         self.db_path = os.getenv('DATABASE', '')
         self.active_conversations: Set[int] = set()  # Активные разговоры
         self.blocked_users: Set[int] = set()  # Заблокированные пользователи
