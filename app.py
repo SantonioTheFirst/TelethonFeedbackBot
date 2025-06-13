@@ -29,12 +29,14 @@ class FeedbackBot:
         self.blocked_users: Set[int] = set()  # Заблокированные пользователи
 
         # Вопросы для обратной связи
-        self.questions = [
-            "Как вас зовут?",
-            "Какой у вас вопрос или предложение?",
-            "Оцените важность вашего обращения от 1 до 5:",
-            "Укажите ваш контактный email (необязательно):"
-        ]
+        questions = os.getenv('QUESTIONS', '')
+        self.questions = [q.strip() for q in questions.split('|')]
+        #self.questions = [
+        #    "Как вас зовут?",
+        #    "Какой у вас вопрос или предложение?",
+        #    "Оцените важность вашего обращения от 1 до 5:",
+        #    "Укажите ваш контактный email (необязательно):"
+        #]
 
         self.init_database()
         self.load_blocked_users()
