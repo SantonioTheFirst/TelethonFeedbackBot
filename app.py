@@ -215,11 +215,11 @@ class FeedbackBot:
                         answers.append(response.message)
 
                         # Валидация для вопроса об важности
-                        if i == 2:  # Вопрос об оценке важности
-                            while not response.message.isdigit() or not 1 <= int(response.message) <= 5:
-                                await conv.send_message("❌ Пожалуйста, введите число от 1 до 5:")
-                                response = await conv.get_response()
-                                answers[i] = response.message
+                        #if i == 2:  # Вопрос об оценке важности
+                        #    while not response.message.isdigit() or not 1 <= int(response.message) <= 5:
+                        #        await conv.send_message("❌ Пожалуйста, введите число от 1 до 5:")
+                        #        response = await conv.get_response()
+                        #        answers[i] = response.message
 
                     # Сохраняем обратную связь в БД
                     self.save_feedback(user_id, answers)
