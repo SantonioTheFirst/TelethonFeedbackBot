@@ -200,7 +200,7 @@ class FeedbackBot:
 
             # Проверка на блокировку
             if user_id in self.blocked_users:
-                await event.respond("❌ Вы заблокированы и не можете использовать бота.")
+                #await event.respond("❌ Вы заблокированы и не можете использовать бота.")
                 raise StopPropagation
 
             # Проверка на администратора
@@ -249,7 +249,8 @@ class FeedbackBot:
                     # Отправляем администратору
                     await self.client.send_message(ADMIN_ID, user_info + feedback_text)
 
-                    await conv.send_message("✅ Спасибо за обратную связь! Ваше сообщение отправлено администратору.")
+                    await conv.send_message("✅ Благодарим за обратную связь! Ваше сообщение отправлено администратору.")
+                    self.block_user(user_id)
 
             except asyncio.TimeoutError:
                 await event.respond("⏰ Время ожидания истекло. Попробуйте снова с /start")
@@ -277,7 +278,7 @@ class FeedbackBot:
 
             # Проверка на блокировку
             if user_id in self.blocked_users:
-                await event.respond("❌ Вы заблокированы и не можете писать боту.")
+                #await event.respond("❌ Вы заблокированы и не можете писать боту.")
                 return
 
             # Сохраняем пользователя если его нет в БД
