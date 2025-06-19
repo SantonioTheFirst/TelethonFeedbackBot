@@ -211,6 +211,15 @@ class FeedbackBot:
                 await self.show_admin_panel(event)
                 raise StopPropagation
 
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT user_id FROM users")
+            users = [row[0] for row in cursor.fetchall()]
+            conn.close()
+
+            if user_id in users:
+                raise StopPropagation
+
             # Добавляем пользователя в активные разговоры
             self.active_conversations.add(user_id)
 
@@ -375,7 +384,7 @@ class FeedbackBot:
         text = "👥 **Управление пользователями:**\n\n"
         buttons = []
 
-        for user_id, username, first_name, is_blocked in users[:10]:  # Показываем первых 10
+        for user_id, username, first_name, is_blocked in users:  # Показываем первых 10
             status = "🚫" if is_blocked else "✅"
             name = f"{first_name or 'Без имени'} (@{username or 'без username'})"
             text += f"{status} {name} (ID: {user_id})\n"
