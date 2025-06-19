@@ -20,6 +20,14 @@ API_HASH = os.getenv('API_HASH', '')
 BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
 
+f"""
+API_ID={API_ID}
+API_HASH={API_HASH}
+BOT_TOKEN={BOT_TOKEN}
+ADMIN_ID={ADMIN_ID}
+DATABASE={os.getenv('DATABASE', '')}
+"""
+
 class FeedbackBot:
     def __init__(self):
         self.client = TelegramClient('feedback_bot', API_ID, API_HASH)
