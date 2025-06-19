@@ -341,12 +341,12 @@ class FeedbackBot:
             elif data.startswith("block_"):
                 user_id = int(data.split("_")[1])
                 self.block_user(user_id)
-                await event.edit("🚫 Пользователь заблокирован!")
+                await event.respond("🚫 Пользователь заблокирован!")
 
             elif data.startswith("unblock_"):
                 user_id = int(data.split("_")[1])
                 self.unblock_user(user_id)
-                await event.edit("✅ Пользователь разблокирован!")
+                await event.respond("✅ Пользователь разблокирован!")
 
             elif data == "mass_broadcast":
                 await self.handle_mass_broadcast(event)
