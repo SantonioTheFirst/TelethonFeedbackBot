@@ -222,7 +222,7 @@ class FeedbackBot:
                     answers = []
 
                     for i, question in enumerate(self.questions):
-                        await conv.send_message(f"**Вопрос {i+1}/4:** {question}")
+                        await conv.send_message(f"**Вопрос {i+1}/{len(self.questions)}:** {question}")
                         response = await conv.get_response()
                         answers.append(response.message)
 
@@ -247,7 +247,12 @@ class FeedbackBot:
                         feedback_text += f"**{i+1}.** {question}\n**Ответ:** {answer}\n\n"
 
                     # Отправляем администратору
-                    await self.client.send_message(ADMIN_ID, user_info + feedback_text)
+                    buttons = [
+                        [Button.inline("✉️ Ответить", f"reply_{user_id}")],
+                        [Button.inline("🚫 Заблокировать", f"block_{user_id}"),
+                        Button.inline("✅ Разблокировать", f"unblock_{user_id}")]
+                    ]
+                    await self.client.send_message(ADMIN_ID, user_info + feedback_text, buttons=buttons)
 
                     await conv.send_message("✅ Благодарим за обратную связь! Ваше сообщение отправлено администратору.")
                     self.block_user(user_id)
