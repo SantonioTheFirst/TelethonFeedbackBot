@@ -3,7 +3,6 @@ version: '3.8'
 services:
   telethon-bot:
     build: .
-    image_name: telethon_bot
     container_name: telethon_bot
     restart: unless-stopped
     volumes:
