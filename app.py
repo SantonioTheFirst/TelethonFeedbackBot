@@ -78,10 +78,7 @@ class FeedbackBot:
             CREATE TABLE IF NOT EXISTS feedback (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
-                name TEXT,
-                question TEXT,
-                importance INTEGER,
-                email TEXT,
+                answers TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users (user_id)
             )
@@ -113,20 +110,19 @@ class FeedbackBot:
         conn.commit()
         conn.close()
 
-    def save_feedback(self, user_id: int, answers: list):
+    def save_feedback(self, user_id: int, answers: str):
         """Сохранение обратной связи в БД"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
         # Дополняем ответы пустыми строками если их меньше 4
-        while len(answers) < 4:
-            answers.append("")
+        #while len(answers) < 4:
+        #    answers.append("")
 
         cursor.execute('''
-            INSERT INTO feedback (user_id, name, question, importance, email)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (user_id, answers[0], answers[1],
-              int(answers[2]) if answers[2].isdigit() else 0, answers[3]))
+            INSERT INTO feedback (user_id, answers)
+            VALUES (?, ?)
+        ''', (user_id, answers))
 
         conn.commit()
         conn.close()
@@ -169,10 +165,7 @@ class FeedbackBot:
                 u.username,
                 u.first_name,
                 u.last_name,
-                f.name,
-                f.question,
-                f.importance,
-                f.email,
+                f.answers,
                 f.created_at
             FROM feedback f
             JOIN users u ON f.user_id = u.user_id
@@ -245,9 +238,6 @@ class FeedbackBot:
                         #        response = await conv.get_response()
                         #        answers[i] = response.message
 
-                    # Сохраняем обратную связь в БД
-                    self.save_feedback(user_id, answers)
-
                     # Формируем сообщение для администратора
                     user_info = f"👤 **Новое обращение от пользователя:**\n"
                     user_info += f"**ID:** {user_id}\n"
@@ -257,6 +247,9 @@ class FeedbackBot:
                     feedback_text = "📝 **Ответы на вопросы:**\n"
                     for i, (question, answer) in enumerate(zip(self.questions, answers)):
                         feedback_text += f"**{i+1}.** {question}\n**Ответ:** {answer}\n\n"
+                    
+                    # Сохраняем обратную связь в БД
+                    self.save_feedback(user_id, feedback_text)
 
                     # Отправляем администратору
                     buttons = [
