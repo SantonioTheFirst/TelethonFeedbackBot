@@ -38,7 +38,7 @@ class FeedbackBot:
 
         # Вопросы для обратной связи
         questions = os.getenv('QUESTIONS', '')
-        self.questions = [q.strip() for q in questions.split('|')]
+        self.questions = [q.strip() for q in questions.split('|') if q != '']
         #self.questions = [
         #    "Как вас зовут?",
         #    "Какой у вас вопрос или предложение?",
