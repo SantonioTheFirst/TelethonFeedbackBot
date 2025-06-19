@@ -19,6 +19,7 @@ API_ID = os.getenv('API_ID', '')
 API_HASH = os.getenv('API_HASH', '')
 BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
+WELCOME_MESSAGE = os.getenv('WELCOME_MESSAGE', '👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.')
 
 info_string = f"""
 API_ID={API_ID}
@@ -26,6 +27,7 @@ API_HASH={API_HASH}
 BOT_TOKEN={BOT_TOKEN}
 ADMIN_ID={ADMIN_ID}
 DATABASE={os.getenv('DATABASE', '')}
+WELCOME_MESSAGE={WELCOME_MESSAGE}
 """
 
 print(info_string)
@@ -35,6 +37,7 @@ class FeedbackBot:
         self.client = TelegramClient('feedback_bot', API_ID, API_HASH)
         os.makedirs('/data', exist_ok=True)
         self.db_path = os.getenv('DATABASE', '')
+        self.welcome_message = WELCOME_MESSAGE
         self.active_conversations: Set[int] = set()  # Активные разговоры
         self.blocked_users: Set[int] = set()  # Заблокированные пользователи
 
@@ -215,7 +218,7 @@ class FeedbackBot:
                 # Сохраняем информацию о пользователе
                 self.save_user(event.sender)
 
-                await event.respond("👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.")
+                await event.respond(self.welcome_message)
 
                 # Начинаем conversation
                 async with self.client.conversation(user_id, timeout=300) as conv:
