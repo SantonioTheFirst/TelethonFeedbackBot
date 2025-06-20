@@ -19,7 +19,10 @@ API_ID = os.getenv('API_ID', '')
 API_HASH = os.getenv('API_HASH', '')
 BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
-WELCOME_MESSAGE = os.getenv('WELCOME_MESSAGE', '👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.')
+try:
+    from config import WELCOME_MESSAGE
+except:
+    WELCOME_MESSAGE = os.getenv('WELCOME_MESSAGE', '👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.')
 
 info_string = f"""
 API_ID={API_ID}
