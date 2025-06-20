@@ -21,7 +21,9 @@ BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
 try:
     from config import WELCOME_MESSAGE
-except:
+    print("Trying import config.py")
+except Exception as e:
+    print(e)
     WELCOME_MESSAGE = os.getenv('WELCOME_MESSAGE', '👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.')
 
 info_string = f"""
