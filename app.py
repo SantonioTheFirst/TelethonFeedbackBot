@@ -212,7 +212,7 @@ class FeedbackBot:
 
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
-            cursor.execute("SELECT user_id FROM users")
+            cursor.execute("SELECT user_id FROM feedback")
             users = [row[0] for row in cursor.fetchall()]
             conn.close()
 
