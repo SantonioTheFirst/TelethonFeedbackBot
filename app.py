@@ -21,11 +21,14 @@ BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
 try:
     from config import WELCOME_MESSAGE
+    from config import FINAL_MESSAGE
     logger.info("Trying import config.py")
     logger.info(WELCOME_MESSAGE)
+    logger.info(FINAL_MESSAGE)
 except Exception as e:
     logger.info(e)
-    WELCOME_MESSAGE = os.getenv('WELCOME_MESSAGE', '👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.')
+    WELCOME_MESSAGE = '👋 Добро пожаловать! Я бот обратной связи. Ответь на несколько вопросов.'
+    FINAL_MESSAGE = '✅ Благодарим за обратную связь! Ваше сообщение отправлено администратору.'
 
 info_string = f"""
 API_ID={API_ID}
@@ -34,6 +37,7 @@ BOT_TOKEN={BOT_TOKEN}
 ADMIN_ID={ADMIN_ID}
 DATABASE={os.getenv('DATABASE', '')}
 WELCOME_MESSAGE={WELCOME_MESSAGE}
+FINAL_MESSAGE = {FINAL_MESSAGE}
 """
 
 logger.info(info_string)
@@ -44,6 +48,7 @@ class FeedbackBot:
         os.makedirs('/data', exist_ok=True)
         self.db_path = os.getenv('DATABASE', '')
         self.welcome_message = WELCOME_MESSAGE
+        self.final_message = FINAL_MESSAGE
         self.active_conversations: Set[int] = set()  # Активные разговоры
         self.blocked_users: Set[int] = set()  # Заблокированные пользователи
 
@@ -265,7 +270,7 @@ class FeedbackBot:
                     ]
                     await self.client.send_message(ADMIN_ID, user_info + feedback_text, buttons=buttons)
 
-                    await conv.send_message("✅ Благодарим за обратную связь! Ваше сообщение отправлено администратору.")
+                    await conv.send_message(self.final_message)
                     self.block_user(user_id)
 
             except asyncio.TimeoutError:
