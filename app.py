@@ -19,6 +19,7 @@ API_ID = os.getenv('API_ID', '')
 API_HASH = os.getenv('API_HASH', '')
 BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
+
 try:
     from config import WELCOME_MESSAGE
     from config import FINAL_MESSAGE
@@ -54,15 +55,7 @@ class FeedbackBot:
 
         # Вопросы для обратной связи
         questions = os.getenv('QUESTIONS', '')
-        print(f"QUESTIONS={questions}")
         self.questions = [q.strip() for q in questions.split('|') if q != '']
-        print(f"self.questions={self.questions}")
-        #self.questions = [
-        #    "Как вас зовут?",
-        #    "Какой у вас вопрос или предложение?",
-        #    "Оцените важность вашего обращения от 1 до 5:",
-        #    "Укажите ваш контактный email (необязательно):"
-        #]
 
         self.init_database()
         self.load_blocked_users()
@@ -125,11 +118,7 @@ class FeedbackBot:
         """Сохранение обратной связи в БД"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-
-        # Дополняем ответы пустыми строками если их меньше 4
-        #while len(answers) < 4:
-        #    answers.append("")
-
+        
         cursor.execute('''
             INSERT INTO feedback (user_id, answers)
             VALUES (?, ?)
@@ -242,13 +231,6 @@ class FeedbackBot:
                         response = await conv.get_response()
                         answers.append(response.message)
 
-                        # Валидация для вопроса об важности
-                        #if i == 2:  # Вопрос об оценке важности
-                        #    while not response.message.isdigit() or not 1 <= int(response.message) <= 5:
-                        #        await conv.send_message("❌ Пожалуйста, введите число от 1 до 5:")
-                        #        response = await conv.get_response()
-                        #        answers[i] = response.message
-
                     # Формируем сообщение для администратора
                     user_info = f"👤 **Новое обращение от пользователя:**\n"
                     user_info += f"**ID:** {user_id}\n"
@@ -269,7 +251,6 @@ class FeedbackBot:
                         Button.inline("✅ Разблокировать", f"unblock_{user_id}")]
                     ]
                     await self.client.send_message(ADMIN_ID, user_info + feedback_text, buttons=buttons)
-
                     await conv.send_message(self.final_message)
                     self.block_user(user_id)
 
@@ -281,7 +262,6 @@ class FeedbackBot:
             finally:
                 # Убираем пользователя из активных разговоров
                 self.active_conversations.discard(user_id)
-
             raise StopPropagation
 
         @self.client.on(events.NewMessage)
@@ -318,7 +298,6 @@ class FeedbackBot:
                 [Button.inline("🚫 Заблокировать", f"block_{user_id}"),
                  Button.inline("✅ Разблокировать", f"unblock_{user_id}")]
             ]
-
             await self.client.send_message(ADMIN_ID, forward_msg, buttons=buttons)
 
         @self.client.on(events.CallbackQuery)
@@ -367,19 +346,16 @@ class FeedbackBot:
     async def show_admin_panel(self, event):
         """Показ админ-панели"""
         admin_text = "🛠 **Панель администратора**\n\nВыберите действие:"
-
         buttons = [
             [Button.inline("👥 Управление пользователями", "user_management")],
             [Button.inline("📢 Массовая рассылка", "mass_broadcast")],
             [Button.inline("📊 Сгенерировать отчёт", "generate_report")]
         ]
-
         await event.respond(admin_text, buttons=buttons)
 
     async def show_user_management(self, event):
         """Показ управления пользователями"""
         users = self.get_all_users()
-
         if not users:
             await event.edit("👥 Пользователей не найдено.",
                            buttons=[[Button.inline("⬅️ Назад", "back_to_admin")]])
@@ -398,12 +374,10 @@ class FeedbackBot:
             buttons.append([Button.inline(f"{action_text} {user_id}", f"{action}_{user_id}")])
 
         buttons.append([Button.inline("⬅️ Назад", "back_to_admin")])
-
         await event.edit(text, buttons=buttons)
 
     async def handle_mass_broadcast(self, event):
         """Обработка массовой рассылки"""
-
         async with self.client.conversation(ADMIN_ID, timeout=300) as conv:
             try:
                 await event.delete()
@@ -475,14 +449,10 @@ class FeedbackBot:
         await self.client.start(bot_token=BOT_TOKEN)
         await self.setup_handlers()
 
-        logger.info("Бот запущен!")
-        print("Бот запущен и готов к работе!")
-
         # Запускаем бота
         await self.client.run_until_disconnected()
 
 # Запуск бота
 if __name__ == "__main__":
     bot = FeedbackBot()
-    #await bot.start()
     asyncio.run(bot.start())
